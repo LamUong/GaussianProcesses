@@ -124,22 +124,37 @@ def load_data():
 	return parameters,Energy_Array
 
 def learning():
-	print("Generating GP")
+	print("Loading data and generating descriptors")
 	Dataarray,Energyarray = load_data()
 	X_train, y_train = numpy.asarray(Dataarray[1000:]) , numpy.asarray(Energyarray[1000:])
-	gp = GaussianProcess(corr='squared_exponential', normalize=True, regr='linear', thetaL=1e-2, thetaU=1.0)
+	print("Generating GP")
+	gp = GaussianProcess(corr='absolute_exponential', normalize=True, regr='quadratic', thetaL=1e-2, thetaU=1.0)
 	gp.fit(X_train, y_train)
 	return gp, Dataarray, Energyarray
 
-def main(x, gp, Dataarray, Energyarray):
+def predict(x, gp, Dataarray, Energyarray):
 	f2, MSE2 = gp.predict([Dataarray[x]], eval_MSE=True)
-	print f2
-	print Energyarray[x]
-	print MSE2
+	a = f2[0]
+	b = Energyarray[x]
+	print a
+	print b
+	return (a-b)**2
+def main():
+	regr = ['constant', 'linear', 'quadratic']
+	corr = ['absolute_exponential', 'squared_exponential','generalized_exponential', 'cubic', 'linear']
+	nugget = 2.2204460492503131e-15
 
-gp, Dataarray, Energyarray = learning()
+	gp, Dataarray, Energyarray = learning()
+	'''
+	sum = 0
+	print("Calculating MSE")
+	for x in range(0,1000,1):
+		sum += predict(x,gp,Dataarray,Energyarray)
+	print (sum/1000)
+	'''
+	while True:
+		Index = raw_input("List Index? ")
+		predict(int(Index),gp,Dataarray,Energyarray)
+		print("\n")
 
-while True:
-	Index = raw_input("List Index? ")
-	main(int(Index),gp,Dataarray,Energyarray)
-	print("\n")
+main()
