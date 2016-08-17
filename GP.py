@@ -97,7 +97,8 @@ def Get_Parameters_for_Gaussian(data):
 		diheXbO4O1Xa = dihedralAngle(Xb,dimer[3],dimer[0],Xa)
 		DiheHmXaO1O4 = dihedralAngle(Hm,Xa,dimer[0],dimer[3])
 		DiheHnXbO4O1 = dihedralAngle(Hn,Xb,dimer[3],dimer[0])
-		ToReturn.append([average1213, dif1213, distance23, average4546, dif4546, distance56, distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
+		ToReturn.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
+			distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
 	
 	return ToReturn
 
@@ -136,22 +137,22 @@ def predict(x, gp, Dataarray, Energyarray):
 	f2, MSE2 = gp.predict([Dataarray[x]], eval_MSE=True)
 	a = f2[0]
 	b = Energyarray[x]
-	print a
-	print b
-	return (a-b)**2
+
+	return math.fabs(a-b)
+
 def main():
 	regr = ['constant', 'linear', 'quadratic']
 	corr = ['absolute_exponential', 'squared_exponential','generalized_exponential', 'cubic', 'linear']
 	nugget = 2.2204460492503131e-15
 
 	gp, Dataarray, Energyarray = learning()
-	'''
+	
 	sum = 0
 	print("Calculating MSE")
 	for x in range(0,1000,1):
 		sum += predict(x,gp,Dataarray,Energyarray)
 	print (sum/1000)
-	'''
+	
 	while True:
 		Index = raw_input("List Index? ")
 		predict(int(Index),gp,Dataarray,Energyarray)
