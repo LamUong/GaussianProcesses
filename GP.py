@@ -76,12 +76,12 @@ def get_parameters_for_Gaussian(data,energy):
 	x_test = []
 	y_test = []
 	number = 0
-	count1= 3000
-	count2=3000
-	count3=3000
-	count4=3000
-	count5=3000
-	count6=3000
+	count1=20000
+	count2=20000
+	count3=20000
+	count4=20000
+	count5=20000
+	count6=20000
 	for dimer, ene in zip(data, energy):
 		number+= 1
 		distance12 = distance_2_coordinates(dimer[0],dimer[1])
@@ -120,6 +120,46 @@ def get_parameters_for_Gaussian(data,energy):
 				distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
 			y_test.append(ene)
 		else:
+			'''
+			print ene
+			if ene <=-0.006 and ene>-0.009 and count1>=0:
+				count1-=1
+				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
+					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
+				y_train.append(ene)
+			elif ene <=-0.004 and ene>-0.006 and count2>=0:
+				count2-=1
+				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
+					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
+				y_train.append(ene)
+			elif ene <=-0.002 and ene>-0.004 and count3>=0:
+				count3-=1
+				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
+					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
+				y_train.append(ene)
+			elif ene <=0.000 and ene>-0.002 and count4>=0:
+				count4-=1
+				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
+					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
+				y_train.append(ene)
+			elif ene <=0.001 and ene>0.000 and count5>=0:
+				count5-=1
+				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
+					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
+				y_train.append(ene)
+			elif ene <=0.003 and ene> 0.001 and count6>=0:
+				count6-=1
+				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
+					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
+				y_train.append(ene)
+			'''
+			if distance2Oxygens <5:
+				count1-=1
+				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
+					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
+				y_train.append(ene)
+
+			'''
 			if distance2Oxygens <=3 and count1>=0:
 				count1-=1 
 				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
@@ -150,6 +190,7 @@ def get_parameters_for_Gaussian(data,energy):
 				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
 					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
 				y_train.append(ene)
+			'''
 	print("a")	
 
 	print count1
@@ -212,7 +253,7 @@ def plot(x,y,e,truey):
 	truey = np.array(truey)
 	plt.plot(x, truey, 'ro')
 	plt.errorbar(x, y, e, linestyle='None', marker='^')
-	plt.savefig('all.png')
+	plt.savefig('5anddown.png')
 
 def main():
 	'''
