@@ -6,6 +6,7 @@ import numpy
 from sys import argv
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import gridspec
 
 
 #Calculate Plane Equation given 3 coordinates
@@ -32,33 +33,33 @@ def dihedral_Angle(Coor1,Coor2,Coor3,Coor4):
 #Caculating Cosine of angle at molA point
 def cosine_from_coordinates(bisector, molA, molB):
 	distanceA=float(distance_2_coordinates(bisector,molA))
- 	distanceB=float(distance_2_coordinates(molA,molB))
- 	distanceC=float(distance_2_coordinates(bisector,molB))
- 	cos = ((distanceB**2)+(distanceA**2)-(distanceC**2))/(2*(distanceA*distanceB))
- 	return cos
+	distanceB=float(distance_2_coordinates(molA,molB))
+	distanceC=float(distance_2_coordinates(bisector,molB))
+	cos = ((distanceB**2)+(distanceA**2)-(distanceC**2))/(2*(distanceA*distanceB))
+	return cos
 
 #Searching for the coordinate of Angle Bisector 
 def recursive_search(Ratio,Coor2,Coor3,OriginCoor2,OriginCoo3):
- 	Mid = (float(Coor2[0]+Coor3[0])/2,float(Coor2[1]+Coor3[1])/2,float(Coor2[2]+Coor3[2])/2)
- 	D12 = distance_2_coordinates(OriginCoor2,Mid)
- 	D23 = distance_2_coordinates(Mid,OriginCoo3)
- 	CalculatedRatio = float(float(D12)/float(D23))
+	Mid = (float(Coor2[0]+Coor3[0])/2,float(Coor2[1]+Coor3[1])/2,float(Coor2[2]+Coor3[2])/2)
+	D12 = distance_2_coordinates(OriginCoor2,Mid)
+	D23 = distance_2_coordinates(Mid,OriginCoo3)
+	CalculatedRatio = float(float(D12)/float(D23))
   
- 	if (CalculatedRatio-0.0001)<Ratio and (CalculatedRatio+0.00001)>Ratio:
-   		return Mid
- 	elif CalculatedRatio<Ratio:
- 		return recursive_search(Ratio,Mid,Coor3,OriginCoor2,OriginCoo3)
- 	elif CalculatedRatio>Ratio:
- 		return recursive_search(Ratio,Coor2,Mid,OriginCoor2,OriginCoo3)
+	if (CalculatedRatio-0.0001)<Ratio and (CalculatedRatio+0.00001)>Ratio:
+		return Mid
+	elif CalculatedRatio<Ratio:
+		return recursive_search(Ratio,Mid,Coor3,OriginCoor2,OriginCoo3)
+	elif CalculatedRatio>Ratio:
+		return recursive_search(Ratio,Coor2,Mid,OriginCoor2,OriginCoo3)
 
 #Searching for the coordinate of Angle Bisector 
 def angle_bisector_coordinates(Coor1,Coor2,Coor3):
-  	#Coor1 is the apex
- 	D12 = distance_2_coordinates(Coor1,Coor2)
- 	D13 = distance_2_coordinates(Coor1,Coor3)
- 	Ratio = float(D12/D13)
- 	CoorBisect = recursive_search(Ratio,Coor2,Coor3,Coor2,Coor3)
- 	return CoorBisect
+	#Coor1 is the apex
+	D12 = distance_2_coordinates(Coor1,Coor2)
+	D13 = distance_2_coordinates(Coor1,Coor3)
+	Ratio = float(D12/D13)
+	CoorBisect = recursive_search(Ratio,Coor2,Coor3,Coor2,Coor3)
+	return CoorBisect
 
 def distance_2_coordinates(Coor1,Coor2):
 	return math.sqrt((Coor1[0]-Coor2[0])**2+(Coor1[1]-Coor2[1])**2+(Coor1[2]-Coor2[2])**2)
@@ -76,12 +77,12 @@ def get_parameters_for_Gaussian(data,energy):
 	x_test = []
 	y_test = []
 	number = 0
-	count1=20000
-	count2=20000
-	count3=20000
-	count4=20000
-	count5=20000
-	count6=20000
+	count1=220
+	count2=220
+	count3=220
+	count4=220
+	count5=220
+	count6=220
 	for dimer, ene in zip(data, energy):
 		number+= 1
 		distance12 = distance_2_coordinates(dimer[0],dimer[1])
@@ -153,13 +154,15 @@ def get_parameters_for_Gaussian(data,energy):
 					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
 				y_train.append(ene)
 			'''
+			'''
 			if distance2Oxygens <5:
 				count1-=1
 				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
 					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
 				y_train.append(ene)
-
 			'''
+
+			
 			if distance2Oxygens <=3 and count1>=0:
 				count1-=1 
 				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
@@ -190,7 +193,7 @@ def get_parameters_for_Gaussian(data,energy):
 				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
 					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
 				y_train.append(ene)
-			'''
+			
 	print("a")	
 
 	print count1
@@ -251,9 +254,20 @@ def plot(x,y,e,truey):
 	y = np.array(y) 
 	e = np.array(e)
 	truey = np.array(truey)
-	plt.plot(x, truey, 'ro')
-	plt.errorbar(x, y, e, linestyle='None', marker='^')
-	plt.savefig('5anddown.png')
+	f, (a0, a1) = plt.subplots(2,1, gridspec_kw = {'height_ratios':[3, 1]})
+	a0.plot(x, truey, 'ro')
+	a0.errorbar(x, y, e, linestyle='None', marker='^')
+
+	DayOfWeekOfCall = [1,2,3,4,5,6]
+	DispatchesOnThisWeekday = [220, 220, 220, 220, 220, 220]
+
+	LABELS = ["<3", "3-4", "4-5","5-6", "6-7", ">7"]
+	a1.bar(y,x)
+
+	a1.bar(DayOfWeekOfCall, DispatchesOnThisWeekday, align='center')
+	a1.set_xticks(DayOfWeekOfCall)
+	a1.set_xticklabels(LABELS)
+	plt.savefig('pics/220.png')
 
 def main():
 	'''
