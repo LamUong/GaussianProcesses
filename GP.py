@@ -77,12 +77,12 @@ def get_parameters_for_Gaussian(data,energy):
 	x_test = []
 	y_test = []
 	number = 0
-	count1=220
-	count2=220
-	count3=220
-	count4=220
-	count5=220
-	count6=220
+	count1=5000
+	count2=5000
+	count3=5000
+	count4=5000
+	count5=5000
+	count6=5000
 	for dimer, ene in zip(data, energy):
 		number+= 1
 		distance12 = distance_2_coordinates(dimer[0],dimer[1])
@@ -196,12 +196,12 @@ def get_parameters_for_Gaussian(data,energy):
 			
 	print("a")	
 
-	print count1
-	print count2
-	print count3
-	print count4
-	print count5
-	print count6
+	print(5000-count1)
+	print(5000-count2) 
+	print(5000-count3)
+	print(5000-count4)
+	print(5000-count5)
+	print(5000-count6)
 	print("a")	
 	return x_train, y_train, x_test, y_test 
 
@@ -267,7 +267,7 @@ def plot(x,y,e,truey):
 	a1.bar(DayOfWeekOfCall, DispatchesOnThisWeekday, align='center')
 	a1.set_xticks(DayOfWeekOfCall)
 	a1.set_xticklabels(LABELS)
-	plt.savefig('pics/220.png')
+	plt.savefig('pics/aaa.png')
 
 def main():
 	'''
