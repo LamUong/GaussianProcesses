@@ -103,6 +103,7 @@ def Get_Parameters_for_Gaussian(data):
 	return ToReturn
 
 def load_data(): 
+	print("Loading data and generating descriptors")
 	Data_array = []
 	Energy_Array = []
 	number = 1
@@ -124,38 +125,49 @@ def load_data():
 	parameters = Get_Parameters_for_Gaussian(Data_array)
 	return parameters,Energy_Array
 
-def learning():
-	print("Loading data and generating descriptors")
-	Dataarray,Energyarray = load_data()
-	X_train, y_train = numpy.asarray(Dataarray[1000:]) , numpy.asarray(Energyarray[1000:])
+def learning(X_train, y_train):
 	print("Generating GP")
 	gp = GaussianProcess(corr='absolute_exponential', normalize=True, regr='quadratic', thetaL=1e-2, thetaU=1.0)
 	gp.fit(X_train, y_train)
-	return gp, Dataarray, Energyarray
+	return gp
 
-def predict(x, gp, Dataarray, Energyarray):
-	f2, MSE2 = gp.predict([Dataarray[x]], eval_MSE=True)
+def predict(x, gp, Geometryarray, Energyarray):
+	f2, MSE2 = gp.predict([Geometryarray[x]], eval_MSE=True)
 	a = f2[0]
 	b = Energyarray[x]
 
 	return math.fabs(a-b)
 
 def main():
-	regr = ['constant', 'linear', 'quadratic']
-	corr = ['absolute_exponential', 'squared_exponential','generalized_exponential', 'cubic', 'linear']
-	nugget = 2.2204460492503131e-15
+	#regr = ['constant', 'linear', 'quadratic']
+	#corr = ['absolute_exponential', 'squared_exponential','generalized_exponential', 'cubic', 'linear']
+	#nugget = 2.2204460492503131e-15
+	#nugget = 1.e-12
+	percenttest = 83.1 # percent of points in the test set
 
-	gp, Dataarray, Energyarray = learning()
+	Geometryarray,Energyarray = load_data()
+	ndatapoints=len(Energyarray)
+	ntest = int(float(ndatapoints)*percenttest/100.0)
+	ntrain = ndatapoints-ntest
+	print "%10d datapoints: %10d training + %10d test" % (ndatapoints,ntrain,ntest)
+
+	Data_train, Energy_train = numpy.asarray(Geometryarray[ntest:]) , numpy.asarray(Energyarray[ntest:])
+
+	gp = learning(Data_train,Energy_train)
+
+	sum = 0.0
+	print("Prediction for test points: point, true value, predicted value, 95% CI")
+	# testing can be done without the loop
+	for x in range(0,ntest,1):
+		# predicts average and sigma_squared
+		gp0, gpMSE0 = gp.predict([Geometryarray[x]], eval_MSE=True)
+		print "%6d%20.10f%20.10f%20.10f%20.10f" % (x, Energyarray[x], gp0[0], 1.96*numpy.sqrt(gpMSE0[0]), Geometryarray[x][6])
+		sum += (gp0[0]-Energyarray[x])**2
+	print "Average of AbsE: %20.10f" % numpy.sqrt((sum/float(ntest)))
 	
-	sum = 0
-	print("Calculating MSE")
-	for x in range(0,1000,1):
-		sum += predict(x,gp,Dataarray,Energyarray)
-	print (sum/1000)
-	
-	while True:
-		Index = raw_input("List Index? ")
-		predict(int(Index),gp,Dataarray,Energyarray)
-		print("\n")
+#	while True:
+#		Index = raw_input("List Index? ")
+#		predict(int(Index),gp,Geometryarray,Energyarray)
+#		print("\n")
 
 main()
