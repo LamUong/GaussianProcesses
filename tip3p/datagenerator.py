@@ -143,10 +143,10 @@ def main():
 		energyCompon = GetInteractionEnergy(coords,atoms_per_mol)
 		energy = energyCompon[0]+energyCompon[1]
 		#print "%15.7f%15.7f%15.7f%15.7f%15.7f%15.7f" % (params[0],params[1],params[2],energyCompon[0],energyCompon[1],energy)
-		print "%15.7f%15.7f%15.7f%15.7f" % (params[0],params[1],params[2],energy)
-		toreturn.append([params[0],params[1],params[2],energy])
+		point = [params[0],params[1],params[2],energy]
+		toreturn.append(point)
+ print len(toreturn)
  return toreturn
 
 
-main()
 
