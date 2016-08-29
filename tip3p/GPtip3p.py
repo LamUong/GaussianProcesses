@@ -11,7 +11,9 @@ import datagenerator
 import random
 '''
 I only used 10 000 data for training caused it was taking a long time (several minutes). The result was plotted and printed. 
-The accuracy was quite good at 10000 training. It can be further increased. 
+The accuracy was quite good at 10000 training. It can be further increased. MSE = 5E-7
+ 
+I also tried 15 000 data point. The MSE still decreased by half compared to 10 000. The accuracy further increased. MSE = 2.5E-7
 
 '''
 def load_data(): 
@@ -24,8 +26,8 @@ def load_data():
 		x.append([para1, para2, para3])
 		y.append(energy)
 
-	x_train = x[200:10000]
-	y_train = y[200:10000]
+	x_train = x[200:15000]
+	y_train = y[200:15000]
 	x_test  = x[0:200]
 	y_test = y[0:200]
 
@@ -73,7 +75,6 @@ def main():
 	'''
 	regression = 'quadratic'
 	correlation = 'absolute_exponential'
-	start = 100
 
 	gp, x_train, y_train, x_test, y_test = learning(regression,correlation)
 
