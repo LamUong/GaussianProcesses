@@ -111,10 +111,10 @@ def main():
  # range of parameters (grid)
  # start value, end value, number of points
  ploops = [ 
-						[2.0,8.0,61], # distance between oxygen atoms, do not set closer than 2 
+						[2.0,8.0,31], # distance between oxygen atoms, do not set closer than 2 
 						#[0.71*pi,2*pi,1], # 1st (xy-plane) mol rotation angle
 						#[5.0*pi/4.0,2*pi,1] # 2nd (perp) mol rotation angle
-						[0.0,2*pi,61], # 1st (xy-plane) mol rotation angle
+						[0.0,pi,31], # 1st (xy-plane) mol rotation angle
 						[0.0,2*pi,61] # 2nd (perp) mol rotation angle
 					]
 
@@ -145,7 +145,9 @@ def main():
 		#print "%15.7f%15.7f%15.7f%15.7f%15.7f%15.7f" % (params[0],params[1],params[2],energyCompon[0],energyCompon[1],energy)
 		point = [params[0],params[1],params[2],energy]
 		toreturn.append(point)
- print len(toreturn)
+
+ print "Total points on a grid: %10d" % len(toreturn)
+
  return toreturn
 
 
