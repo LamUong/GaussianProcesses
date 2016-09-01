@@ -27,8 +27,8 @@ def load_data(npoints,ntests):
 	y = []
 	# reformat data
 	for point in range(0,npoints):
-		para1, para2, para3, energy = data[point]
-		x.append([para1, para2, para3])
+		params, energy = data[point]
+		x.append(params[:])
 		y.append(energy)
 
 	x_test  = x[0:ntests]
@@ -49,9 +49,14 @@ def learning(regression,correlation,x_train,y_train):
 	gp.fit(X_train, Y_train)
 	return gp
 
-def predict_point(gp, x_test):
-	f2, MSE = gp.predict([x_test], eval_MSE=True)
+def predict_point(gp, x_test_point):
+	f2, MSE = gp.predict([x_test_point], eval_MSE=True)
 	return f2[0], MSE
+
+def predict_set(gp, x_test):
+	f2, MSE = gp.predict(x_test, eval_MSE=True)
+	return f2[0], MSE
+
 
 def plot(x,y,e,truey):
 
@@ -85,7 +90,7 @@ def main():
 
 	gp = learning(regression,correlation,x_train, y_train)
 
-	print("Making predictions")
+	print("Making predictions (points)")
 	x = []
 	y = []
 	e = []
@@ -111,10 +116,16 @@ def main():
 		e.append(2*sigma)
 		truey.append(validation_energy)
 
-		print "%15.7f%15.7f%15.7f" % (predicted_energy,validation_energy,2*sigma) 
+		#print "%15.7f%15.7f%15.7f" % (predicted_energy,validation_energy,2*sigma) 
 
 	RMSE = np.sqrt(RMSE/ntests)
 	print "RMSE: %20.10f, MAXE: %20.10f" % (RMSE,MaxE)
 	plot(x,y,e,truey)
+	
+	#print "Making predictions (set)"
+	#predicted_energy_Q, sigma2_Q = predict_set(gp, x_test)
+	#print predicted_energy_Q
+	#print sum(sigma2_Q)
 
 main()
+
