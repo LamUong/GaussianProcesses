@@ -72,8 +72,8 @@ def plot(x,y,e,truey):
 
 def main():
 
-	npoints=10000
-	ntests=1000
+	npoints=10200
+	ntests=200
 
 	x_train, y_train, x_test, y_test = load_data(npoints,ntests)
 	print "Points in the training set: %10d" % len(y_train)
@@ -86,7 +86,7 @@ def main():
 	nugget = 2.2204460492503131e-15
 	'''
 	regression = 'quadratic'
-	correlation = 'absolute_exponential'
+	correlation = 'cubic'
 
 	gp = learning(regression,correlation,x_train, y_train)
 
@@ -116,7 +116,7 @@ def main():
 		e.append(2*sigma)
 		truey.append(validation_energy)
 
-		#print "%15.7f%15.7f%15.7f" % (predicted_energy,validation_energy,2*sigma) 
+		print "%15.7f%15.7f%15.7f" % (predicted_energy,validation_energy,2*sigma) 
 
 	RMSE = np.sqrt(RMSE/ntests)
 	print "RMSE: %20.10f, MAXE: %20.10f" % (RMSE,MaxE)
