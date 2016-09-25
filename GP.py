@@ -160,7 +160,7 @@ def get_parameters_for_Gaussian(data,energy):
 				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
 					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
 				y_train.append(ene)
-			'''
+			
 
 			
 			if distance2Oxygens <=3 and count1>=0:
@@ -193,6 +193,7 @@ def get_parameters_for_Gaussian(data,energy):
 				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
 					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
 				y_train.append(ene)
+			'''
 			
 	print("a")	
 

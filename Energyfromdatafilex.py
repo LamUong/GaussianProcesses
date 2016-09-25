@@ -13,7 +13,8 @@ import os
 sys.path.append("/GaussianProcesses/tip3p/")
 import datagenerator
 
-def load_data(): 
+def load_data(Quantum_enrgy,Parameters,trainingsize): 
+
 	print("Loading data and generating descriptors")
 	Data_array = []
 	Energy_Array = []
@@ -33,12 +34,20 @@ def load_data():
 					Coordinates = [float(Splitted_Line[1]),float(Splitted_Line[2]),float(Splitted_Line[3])]
 					NewSubEnergyArray.append(Coordinates)
 			number+=1
+
 	New_energy_array_from_nonquantum_cal = []
 	for coors in Data_array:
 		energy = sum(datagenerator.GetInteractionEnergy(coors))
 		New_energy_array_from_nonquantum_cal.append(energy)
 
-	x_train, y_train, x_test, y_test = get_parameters_all_distances(Data_array, New_energy_array_from_nonquantum_cal)
+	if Quantum_enrgy == True and Parameters == 'All_distances':
+		x_train, y_train, x_test, y_test = get_parameters_all_distances(Data_array, Energy_Array,trainingsize)
+	elif Quantum_enrgy == False and Parameters == 'All_distances':
+		x_train, y_train, x_test, y_test = get_parameters_all_distances(Data_array, New_energy_array_from_nonquantum_cal,trainingsize)
+	elif Quantum_enrgy == True and Parameters == 'Distances_and_Angles':
+		x_train, y_train, x_test, y_test = get_old_parameters_Angles_and_Distances(Data_array, Energy_Array,trainingsize)
+	elif Quantum_enrgy == False and Parameters == 'Distances_and_Angles':
+		x_train, y_train, x_test, y_test = get_old_parameters_Angles_and_Distances(Data_array, New_energy_array_from_nonquantum_cal,trainingsize)
 	return x_train, y_train, x_test, y_test
 
 
@@ -104,7 +113,7 @@ def average_between_distances(Listofdistances):
 def symmetric_differences_of_2_distances(Distanceij,Distanceik):
 	return ((Distanceij-Distanceik)**2)
 
-def get_parameters_all_distances(data,energy):
+def get_parameters_all_distances(data,energy,trainingsize):
 	x_train = []
 	y_train = []
 	x_test = []
@@ -119,7 +128,7 @@ def get_parameters_all_distances(data,energy):
 			while j <len(Listpairinter):
 				parameters.append(distance_2_coordinates(dimer[i],dimer[j]))
 				j+=1
-		if number <200:
+		if number <trainingsize:
 			x_test.append(parameters) 
 			y_test.append(ene)
 		else:
@@ -129,20 +138,13 @@ def get_parameters_all_distances(data,energy):
 
 
 
-def get_parameters_for_Gaussian(data,energy):
+def get_old_parameters_Angles_and_Distances(data,energy,trainingsize):
 	x_train = []
 	y_train = []
 	x_test = []
 	y_test = []
 	number = 0
-	'''
-	count1=5000
-	count2=5000
-	count3=5000
-	count4=5000
-	count5=5000
-	count6=5000
-	'''
+	
 	for dimer, ene in zip(data, energy):
 		number+= 1
 		distance12 = distance_2_coordinates(dimer[0],dimer[1])
@@ -177,7 +179,7 @@ def get_parameters_for_Gaussian(data,energy):
 		DiheHmXaO1O4 = dihedral_Angle(Hm,Xa,dimer[0],dimer[3])
 		DiheHnXbO4O1 = dihedral_Angle(Hn,Xb,dimer[3],dimer[0])
 	
-		if number <200:
+		if number <trainingsize:
 			x_test.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
 				distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
 			y_test.append(ene)
@@ -186,87 +188,12 @@ def get_parameters_for_Gaussian(data,energy):
 					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
 			y_train.append(ene)
 	
-			'''
-			print ene
-			if ene <=-0.006 and ene>-0.009 and count1>=0:
-				count1-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			elif ene <=-0.004 and ene>-0.006 and count2>=0:
-				count2-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			elif ene <=-0.002 and ene>-0.004 and count3>=0:
-				count3-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			elif ene <=0.000 and ene>-0.002 and count4>=0:
-				count4-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			elif ene <=0.001 and ene>0.000 and count5>=0:
-				count5-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			elif ene <=0.003 and ene> 0.001 and count6>=0:
-				count6-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			'''
-			'''
-			if distance2Oxygens <5:
-				count1-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			'''
-
-			'''
-			if distance2Oxygens <=3 and count1>=0:
-				count1-=1 
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			elif distance2Oxygens >3 and distance2Oxygens<=4 and count2>=0:
-				count2-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			elif distance2Oxygens >4 and distance2Oxygens<=5 and count3>=0:
-				count3-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			elif distance2Oxygens >5 and distance2Oxygens<=6 and  count4>=0:
-				count4-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			elif distance2Oxygens >6 and distance2Oxygens<=7 and  count5>=0: 
-				count5-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			elif distance2Oxygens >7 and count6>=0:
-				count6-=1
-				x_train.append([average1213, dif1213, distance23, average4546, dif4546, distance56, 
-					distance2Oxygens, cosXaO1O4, cosXbO4O1, diheXbO4O1Xa, DiheHmXaO1O4, DiheHnXbO4O1]) 
-				y_train.append(ene)
-			'''
-			
 	return x_train, y_train, x_test, y_test 
 
 
 
-def learning(regression,correlation,start):
-	print("Loading data and generating descriptors")
-	x_train, y_train, x_test, y_test = load_data()
+def learning(regression,correlation,trainingsize,Quantum_enrgy,Parameters):
+	x_train, y_train, x_test, y_test = load_data(Quantum_enrgy,Parameters,trainingsize)
 	print len(x_train)
 	print len(y_train)
 
@@ -306,7 +233,7 @@ def plot(x,y,e,truey):
 	a1.set_xticklabels(LABELS)
 	plt.savefig('pics/rzk.png')
 
-def main():
+def main(Quantum_enrgy, Parameters):
 	'''
 	regr = ['constant', 'linear', 'quadratic']
 	corr = ['absolute_exponential', 'squared_exponential','generalized_exponential', 'cubic', 'linear']
@@ -315,24 +242,33 @@ def main():
 	'''
 	regression = 'quadratic'
 	correlation = 'squared_exponential'
-	start = 100
+	trainingsize = 200
 
-	gp, x_train, y_train, x_test, y_test = learning(regression,correlation,start)
+	gp, x_train, y_train, x_test, y_test = learning(regression,correlation,trainingsize, Quantum_enrgy, Parameters)
 
 	x = []
 	y = []
 	e = []
 	truey = []
 	print("Calculating MSE")
-	myfile = open('xyz.txt', 'w')
+	if Quantum_enrgy == True and Parameters == 'All_distances':
+		name = "Quantum,All_distances.txt"
+	elif Quantum_enrgy == False and Parameters == 'All_distances':
+		name = "Non_Quantum,All_distances.txt"
+	elif Quantum_enrgy == True and Parameters == 'Distances_and_Angles':
+		name = "Quantum,Distances_and_Angles.txt"
+	elif Quantum_enrgy == False and Parameters == 'Distances_and_Angles':
+		name = "Non_Quantum,Distances_and_Angles.txt"
+	myfile = open(name, 'w')
 
 	MSE =0
+	MAPE = 0
 	number =0
 	for index in range(0,199,1):
 		number+=1 
 		print index
 		sigma, predicted_energy, validation_energy, absolute_differences = predict(index, gp, x_test, y_test)
-
+		MAPE += math.fabs(absolute_differences/validation_energy)
 		MSE += absolute_differences**2
 		
 		x.append(x_test[index][6])
@@ -341,11 +277,15 @@ def main():
 		truey.append(validation_energy)
 		myfile.write("%15.7f%15.7f%15.7f\n" % (predicted_energy,validation_energy,2*sigma) )
 
-	MSE = MSE/100
+	MSE = MSE/trainingsize
+	MAPE = MAPE*100/trainingsize
 	print MSE
+	print MAPE
+	myfile.write("MSE = " + str(MSE))
+	myfile.write("MAPE = " + str(MAPE))
 	myfile.close()
 
 
 	#plot(x,y,e,truey)
 
-main()
+main(Quantum_enrgy = False, Parameters = 'Distances_and_Angles')
