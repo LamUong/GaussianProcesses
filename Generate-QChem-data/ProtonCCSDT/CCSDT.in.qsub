@@ -1,0 +1,13 @@
+#!/bin/bash
+#PBS -l walltime=01:10:00
+#PBS -l nodes=1:ppn=16:sandybridge
+#PBS -l pmem=3700m
+#PBS -A mfj-281-ab 
+#PBS -V
+#PBS -N pt
+#PBS -e _pt.stde
+#PBS -o _pt.stdo
+
+cd ${PBS_O_WORKDIR}
+qchem -nt 16 CCSDT.in CCSDT.in.out
+

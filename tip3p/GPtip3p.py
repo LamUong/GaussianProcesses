@@ -19,7 +19,7 @@ I also tried 15 000 data point. The MSE still decreased by half compared to 10 0
 def load_data(npoints,ntests): 
 	print("Generating data")
 
-	data = datagenerator.main()
+	data = datagenerator.main(energyRequired=True)
 
 	print("Constructing test/train sets")
 	random.shuffle(data)

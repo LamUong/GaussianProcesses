@@ -1,0 +1,13 @@
+$molecule
+READ molecule.init
+$end
+
+$rem
+   UNRESTRICTED = FALSE
+   BASIS  =  aug-cc-pVTZ
+   GUI  =  2
+   JOB_TYPE  =  BSSE
+   METHOD  =  CCSD(T)
+   SCF_CONVERGENCE  =  5
+   SCF_PRINT_FRGM  =  TRUE
+$end
